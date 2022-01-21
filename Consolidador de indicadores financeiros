@@ -1,0 +1,135 @@
+import requests
+import pandas as pd
+import win32com.client
+import matplotlib.pyplot as plt
+import numpy as np
+import dataframe_image as dfi
+import sys
+import matplotlib.pyplot as plt
+import yfinance as yf
+import math
+import concurrent.futures
+from datetime import datetime
+from yahooquery import Ticker
+from PIL import Image
+from collections import OrderedDict
+from datetime import date, timedelta
+
+now = datetime.now()
+date_time = now.strftime("%Y-%m-%d")
+
+#Busca de principais variações em Portais
+
+#começando tabela1
+url = 'https://economia.uol.com.br/cotacoes/bolsas/'
+html = requests.get(url).content
+df_list = pd.read_html(html)
+df = df_list[1] 
+df.columns =['Altas','Var.(%)','Preço']
+df.reset_index(drop=True, inplace=True)
+df = df.sort_values(by=['Var.(%)'], ascending=False)
+#df = df.head(6)
+print(df)
+tabela = pd.DataFrame(df)
+tabela.reset_index(drop=True, inplace=True)
+df_styled = tabela.style.background_gradient()
+dfi.export(df_styled,"Resumo_Altas.png")
+
+#começando tabela2
+url = 'https://economia.uol.com.br/cotacoes/bolsas/'
+html = requests.get(url).content
+df_list2 = pd.read_html(html)
+df2 = df_list2[2] 
+df2.columns =['Perdas','Var.(%)','Preço']
+df2.reset_index(drop=True, inplace=True)
+df2 = df2.sort_values(by=['Var.(%)'], ascending=True)
+print(df2)
+tabela2 = pd.DataFrame(df2)
+tabela2.reset_index(drop=True, inplace=True)
+df_styled = tabela2.style.background_gradient()
+dfi.export(df_styled,"Resumo_Baixas.png")
+
+#começando tabela3
+url = 'https://economia.uol.com.br/cotacoes/bolsas/'
+html = requests.get(url).content
+df_list3 = pd.read_html(html)
+df3 = df_list3[3] 
+df3.columns =['Volumes','Var.(%)','Preço']
+df3.reset_index(drop=True, inplace=True)
+print(df3)
+tabela3 = pd.DataFrame(df3)
+tabela3.reset_index(drop=True, inplace=True)
+df_styled = tabela3.style.background_gradient()
+dfi.export(df_styled,"Resumo_Volumes.png")
+
+#começando tabela4
+url = 'https://investmax.com.br/iM/content.asp?contentid=708'
+html = requests.get(url).content
+df_list = pd.read_html(html)
+df = df_list[0] 
+df = df[['Ações','10Dias', '3meses', '1ano']]
+
+print('Importando ações')
+
+#seleção bancos
+df_bancos6= df[(df["Ações"] == 'PAGS34')]
+df_bancos1= df[(df["Ações"] == 'BBDC4' )]
+df_bancos2= df[(df["Ações"] == 'ITUB4' )]
+df_bancos3= df[(df["Ações"] == 'ITSA4' )]
+df_bancos3= df[(df["Ações"] == 'BBAS3' )]
+df_bancos4= df[(df["Ações"] == 'BPAC11')]
+df_bancos5= df[(df["Ações"] == 'BIDI11')]
+df_bancos7= df[(df["Ações"] == 'STONE34')]
+
+df_bancos = pd.concat([df_bancos6,df_bancos2,df_bancos3,df_bancos5,
+                       df_bancos1,df_bancos7], ignore_index=True)
+df_bancos.columns =['Volatilidade','10Dias', '3meses', '1ano']
+
+tabela5 = pd.DataFrame(df_bancos)
+tabela5.reset_index(drop=True, inplace=True)
+
+df_bancos = pd.DataFrame(tabela5)
+df_styled = df_bancos.style.background_gradient()
+dfi.export(df_styled,"Resumo_Volatilidade.png")
+
+print('Imagem final')
+
+images = [Image.open(x) for x in ['Resumo_Altas.png', 'Resumo_Baixas.png', 
+                                  'Resumo_Volumes.png','Resumo_Volatilidade.png']]
+
+widths, heights = zip(*(i.size for i in images))
+
+total_width = sum(widths)
+max_height = max(heights)
+
+new_im = Image.new('RGB', (total_width, max_height))
+
+x_offset = 0
+y_offset = 0
+
+for im in images:
+  new_im.paste(im, (x_offset,0))
+  x_offset += im.size[0]
+
+new_im.save('Resumo Diário.jpg')
+
+#Busca de preços pelo Yahoo Finance
+
+custodia = pd.read_excel("Var_Diário.xlsx")
+
+print('Criar arquivo de preços')
+
+selected_columns = custodia[["Ativo"]]
+tickers_price = selected_columns.copy()
+tickers_price = tickers_price.drop_duplicates()
+tickers_price['Ativo'] = tickers_price ['Ativo']+".SA"
+tickers_price.reset_index(drop=True, inplace=True)
+tickers_price = tickers_price.Ativo.tolist()
+
+print('Buscar preços')
+preçoYahoo = Ticker(tickers_price, asynchronous=True)
+preçoYahoo = yf.download(tickers_price, date_time)['Close']
+preçoYahoo = preçoYahoo.T
+preçoYahoo.head()
+preçoYahoo.reset_index(level=0, inplace=True)
+preçoYahoo = preçoYahoo.rename(columns={'index': 'Ativo'})
