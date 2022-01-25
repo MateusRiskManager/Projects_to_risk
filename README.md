@@ -1,4 +1,4 @@
-#Programação para não programadores
+#Code to noncoders
 
 #1 Consolidador de indicadores financeiros
 Este seria um arquivo de fechamento de mercado onde você pode consolidar as principais variações de preço do dia do mercado brasileiro. 
