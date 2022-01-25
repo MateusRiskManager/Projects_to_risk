@@ -1,0 +1,31 @@
+import pandas as pd
+from pandas_datareader import data as pdr
+import yfinance as yf
+from yahoofinancials import YahooFinancials
+import numpy as np
+import datetime as dt
+from datetime import datetime
+
+now = datetime.now()
+date_time = now.strftime("%m-%d-%Y")
+
+# Indicar quais ações buscaremos o preço
+tickers = ['PAGS','STNE','MELI']
+ 
+# Indicar os % de cada uma delas
+weights = np.array([.33, .33, .33])
+
+# Valor inicial da carteira
+initial_investment = 1000000
+
+# Buscando preços de fechamento no Yahoo Finance
+data = pdr.get_data_yahoo(tickers, start= "2021-01-01", end=dt.date.today())['Close']
+
+# Calculando os retornos diários
+returns = data.pct_change()
+
+# Demonstrando dos números mais recentes
+returns.tail()
+
+# Plotagem dos gráficos
+returns.plot(title="Portfolio Teste")
