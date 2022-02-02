@@ -1,0 +1,68 @@
+"""
+Created on Tue Feb  1 15:18:30 2022
+
+@author: mafeitosa
+"""
+import pandas as pd
+from pandas_datareader import data as pdr
+import yfinance as yf
+from yahoofinancials import YahooFinancials
+import numpy as np
+import datetime as dt
+from datetime import datetime, date
+import matplotlib.pyplot as plt
+import time
+import win32com
+import statistics
+
+from scipy import stats
+import pandas as pd
+import pandas_datareader as web
+import datetime
+import matplotlib.pyplot as plt
+
+print("Benchmark")
+start = datetime.datetime(2019,1,1)
+end = datetime.datetime(2022,1,28)
+
+df_bench = web.DataReader('BTC-USD','yahoo',start,end)
+df_bench.head()
+
+df_bench['% Ret'] = (df_bench['Adj Close'] - df_bench['Adj Close'].shift(1))/df_bench['Adj Close'].shift(1)
+df_bench['% Ret'] = df_bench['% Ret'].fillna(0)
+df_bench['% Ret'] = df_bench['% Ret'] + 1
+df_bench['% Ret Acc'] = (df_bench['% Ret'] * (df_bench['% Ret'].shift(1)))
+df_bench['% Ret Acc'] = (df_bench['% Ret Acc'] * (df_bench['% Ret Acc'].shift(1)))
+df_bench['% Ret Acc'] = df_bench['% Ret Acc']-1
+df_bench.reset_index(level=0, inplace=True)
+
+print("Benchmark2")
+start = datetime.datetime(2019,1,1)
+end = datetime.datetime(2022,1,28)
+
+df_bench2 = web.DataReader('^NCI','yahoo',start,end)
+df_bench2.head()
+
+df_bench2['% Ret'] = (df_bench2['Adj Close'] - df_bench2['Adj Close'].shift(1))/df_bench2['Adj Close'].shift(1)
+df_bench2['% Ret'] = df_bench2['% Ret'].fillna(0)
+df_bench2['% Ret'] = df_bench2['% Ret'] + 1
+df_bench2['% Ret Acc'] = (df_bench2['% Ret'] * (df_bench2['% Ret'].shift(1)))
+df_bench2['% Ret Acc'] = (df_bench2['% Ret Acc'] * (df_bench2['% Ret Acc'].shift(1)))
+df_bench2['% Ret Acc'] = df_bench2['% Ret Acc']-1
+df_bench2.reset_index(level=0, inplace=True)
+
+print("Cambio")
+
+df_cambio = web.DataReader('BRL=X','yahoo',start,end)
+df_cambio.head()
+
+df_cambio['% Ret'] = (df_cambio['Adj Close'] - df_cambio['Adj Close'].shift(1))/df_cambio['Adj Close'].shift(1)
+df_cambio['% Ret'] = df_cambio['% Ret'].fillna(0)
+df_cambio['% Ret'] = df_cambio['% Ret'] + 1
+df_cambio['% Ret Acc'] = (df_cambio['% Ret'] * (df_cambio['% Ret'].shift(1)))
+df_cambio['% Ret Acc'] = (df_cambio['% Ret Acc'] * (df_cambio['% Ret Acc'].shift(1)))
+df_cambio['% Ret Acc'] = df_cambio['% Ret Acc']-1
+df_cambio.reset_index(level=0, inplace=True)
+ 
+df_cambio.to_excel("C:\\Users\mafeitosa\OneDrive - UNIVERSO ONLINE S.A\Documentos Compartilhados\Risco\Base de dados\Preços\Câmbio.xlsx", 
+                index=False)
