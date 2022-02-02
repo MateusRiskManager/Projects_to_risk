@@ -178,38 +178,11 @@ del df_mitra['LIQUIDEZ_DIARIA_dia']
 del df_mitra['LIQUIDEZ_DIARIA_mes']
 del df_mitra['LIQUIDEZ_DIARIA_ano']
 
-df_mitra['TAXA%'] = 0
-df_mitra['INDEXADOR'] = "CDI"
-df_mitra['PU_EMISSAO'] = 1000
-df_mitra['CARTEIRA_NEGOCIACAO'] = 'Banking'
-df_mitra['LOCAL_REGISTRO'] = '2'
-df_mitra['TIPO_MARCACAO'] = 'C'
-df_mitra['ESTRATEGIA_1'] = " "
-df_mitra['ESTRATEGIA_2'] = " "
-df_mitra['ESTRATEGIA_3'] = " "
-df_mitra['INFORMATIVO_2'] = " "
-df_mitra['DEVEDOR'] = " "
-df_mitra['LASTRO'] = " "
-df_mitra['DEVEDOR'] = " "
-df_mitra['LOC_LIMITE'] = " "
-df_mitra['MOD_OPERACAO'] = " "
-df_mitra['SISTEMA_REGISTRO'] = " "
-df_mitra['VALOR_COMPENSACAO'] = " "
-df_mitra['SISTEMA_REGISTRO'] = " "
-df_mitra['TIPO_EXPOSICAO'] = " "
-df_mitra['VALOR_MITIGADOR'] = " "
-df_mitra['CONTRATO'] = df['NUMESTOQUE']
-df_mitra['CPF_CNPJ'] = df['CODCLIENTE']
-
 #df_mitra['QUANTIDADE'].dtype
 #df_mitra['QUANTIDADE'] = pd.to_numeric(df_mitra['QUANTIDADE'])
 
 df_mitra['QUANTIDADE'] = df_mitra['QUANTIDADE'].astype('str') 
 df_mitra['QUANTIDADE'] = "-" + df_mitra['QUANTIDADE']
-
-df_mitra['CONTA_CONTABIL'] = df_mitra['CONTA_CONTABIL'].apply(lambda x: '41510102' if x == 'CDB' else '41510236')
-df_mitra['FINALIDADE_CONTABIL'] = df_mitra['CONTA_CONTABIL'].apply(lambda x: 'Deposito a prazo com certificado' if x == '41510102' else 'Deposito a prazo com garantia especial')
-df_mitra['NOME_PRODUTO'] = df_mitra['CONTA_CONTABIL'].apply(lambda x: 'CDB' if x == '41510102' else 'DPGE')
 
 df_mitra = df_mitra[['CODIGO', 'DATA_POSICAO','CONTRATO','CONTA_CONTABIL','FINALIDADE_CONTABIL',
                      'NOME_PRODUTO','DESCRICAO','INICIO','VENCIMENTO','LIQUIDEZ_DIARIA',
