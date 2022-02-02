@@ -64,5 +64,3 @@ df_cambio['% Ret Acc'] = (df_cambio['% Ret Acc'] * (df_cambio['% Ret Acc'].shift
 df_cambio['% Ret Acc'] = df_cambio['% Ret Acc']-1
 df_cambio.reset_index(level=0, inplace=True)
  
-df_cambio.to_excel("C:\\Users\mafeitosa\OneDrive - UNIVERSO ONLINE S.A\Documentos Compartilhados\Risco\Base de dados\Preços\Câmbio.xlsx", 
-                index=False)
